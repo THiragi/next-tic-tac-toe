@@ -1,6 +1,6 @@
 import styles from './board.module.css';
 
-export type Square = 'X' | 'O' | '';
+export type Square = '×' | '○' | null;
 
 type SquareProps = { value: Square; onSquareClick: () => void };
 
@@ -24,7 +24,7 @@ export function Board({ xIsNext, squares, onPlay }: BoardProps) {
       return;
     }
     const nextSquares = squares.slice();
-    nextSquares[i] = xIsNext ? 'X' : 'O';
+    nextSquares[i] = xIsNext ? '×' : '○';
     onPlay(nextSquares);
   }
 
@@ -32,7 +32,7 @@ export function Board({ xIsNext, squares, onPlay }: BoardProps) {
 
   const status = winner
     ? 'Winner: ' + winner
-    : 'Next player: ' + (xIsNext ? 'X' : 'O');
+    : 'Next player: ' + (xIsNext ? '×' : '○');
 
   return (
     <>
@@ -51,22 +51,28 @@ export function Board({ xIsNext, squares, onPlay }: BoardProps) {
 }
 
 function calculateWinner(squares: Square[]) {
-  const lines = [
-    [0, 1, 2], // 上横
-    [0, 3, 6], // 左縦
-    [0, 4, 8], // 左斜め
-    [1, 4, 7], // 真ん中縦
-    [2, 4, 6], // 右斜め
-    [2, 5, 8], // 右縦
-    [3, 4, 5], // 真ん中横
-    [6, 7, 8], // 下横
-  ];
+  const side = Math.round(Math.log2(squares.length));
+  const length = [...Array(squares.length)].map((_, i) => i);
+  const horizontal = length.reduce(
+    (a, c) => (c % side ? a : [...a, length.slice(c, c + side)]),
+    [] as number[][]
+  );
+  const vertical = horizontal[0].map((h) =>
+    [...Array(side)].map((_, i) => i * side + h)
+  );
+  const leftDiagonal = horizontal.map((h, i) => h[i]);
+  const rightDiagonal = horizontal.map((h, i) => h[h.length - (i + 1)]);
+  const lines = [...horizontal, ...vertical, leftDiagonal, rightDiagonal];
 
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
+  const match = lines.find((line) => {
+    return (
+      squares[line[0]] !== null &&
+      line.map((l) => squares[l]).every((s) => s === squares[line[0]])
+    );
+  });
+
+  if (match) {
+    return squares[match[0]];
   }
   return null;
 }

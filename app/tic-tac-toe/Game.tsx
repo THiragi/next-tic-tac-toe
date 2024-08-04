@@ -4,12 +4,15 @@ import { useState } from 'react';
 import { Board, type Square } from './Board';
 import styles from './game.module.css';
 
+const SIDE = 3;
+
 export function Game() {
-  const [history, setHistory] = useState<Square[][]>([Array(9).fill('')]);
+  const [history, setHistory] = useState<Square[][]>([
+    Array(SIDE ** 2).fill(null),
+  ]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
-
   function handlePlay(nextSquares: Square[]) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
