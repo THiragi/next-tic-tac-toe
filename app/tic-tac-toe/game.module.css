@@ -1,32 +1,8 @@
-.square {
-  color: #000;
-  background: #fff;
-  border: 1px solid #999;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-.board {
-  height: 102px;
-  width: 102px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:0;
-}
-
-
-.status {
-  margin-bottom: 10px;
-}
 .game {
   margin: 64px;
   display: flex;
   flex-direction: row;
 }
-
 .gameBoard {
   margin-right: 64px;
 }
