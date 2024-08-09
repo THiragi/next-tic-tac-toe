@@ -5,7 +5,7 @@ import { Board, type Square } from './Board';
 import styles from './game.module.css';
 
 export function Game() {
-  const [side, setSide] = useState(4);
+  const [side, setSide] = useState(3);
   const [history, setHistory] = useState<Square[][]>([
     Array(side ** 2).fill(null),
   ]);
@@ -51,8 +51,9 @@ export function Game() {
             name="side"
             type="range"
             min={3}
-            max={5}
+            max={12}
             onChange={handleSide}
+            value={side}
           />
         </label>
       </div>

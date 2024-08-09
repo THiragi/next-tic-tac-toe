@@ -28,7 +28,7 @@ type BoardProps = {
 
 export function Board({ xIsNext, squares, onPlay, side }: BoardProps) {
   function handleClick(i: number) {
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares, side) || squares[i]) {
       return;
     }
     const nextSquares = squares.slice();
@@ -36,7 +36,7 @@ export function Board({ xIsNext, squares, onPlay, side }: BoardProps) {
     onPlay(nextSquares);
   }
 
-  const winner = calculateWinner(squares);
+  const winner = calculateWinner(squares, side);
 
   const status = winner
     ? 'Winner: ' + winner.square
@@ -67,8 +67,7 @@ export function Board({ xIsNext, squares, onPlay, side }: BoardProps) {
   );
 }
 
-function calculateWinner(squares: Square[]) {
-  const side = Math.round(Math.log2(squares.length));
+function calculateWinner(squares: Square[], side: number) {
   const length = [...Array(squares.length)].map((_, i) => i);
   const horizontal = length.reduce(
     (a, c) => (c % side ? a : [...a, length.slice(c, c + side)]),
