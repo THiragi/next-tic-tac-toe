@@ -1,12 +1,19 @@
+import { SIZE } from '@/const/game';
 import styles from './board.module.css';
 
 export type Square = '×' | '○' | null;
 
-type SquareProps = { value: Square; onSquareClick: () => void };
+type SquareProps = { value: Square; win: boolean; onSquareClick: () => void };
 
-function Square({ value, onSquareClick }: SquareProps) {
+function Square({ value, win, onSquareClick }: SquareProps) {
+  const style = {
+    height: `${SIZE}px`,
+    width: `${SIZE}px`,
+    color: `${win ? 'blue' : 'black'}`,
+    backgroundColor: `${win ? 'lightblue' : 'white'}`,
+  };
   return (
-    <button className={styles.square} onClick={onSquareClick}>
+    <button className={styles.square} onClick={onSquareClick} style={style}>
       {value}
     </button>
   );
@@ -16,9 +23,10 @@ type BoardProps = {
   xIsNext: boolean;
   squares: Square[];
   onPlay: (nextSquares: Square[]) => void;
+  side: number;
 };
 
-export function Board({ xIsNext, squares, onPlay }: BoardProps) {
+export function Board({ xIsNext, squares, onPlay, side }: BoardProps) {
   function handleClick(i: number) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -31,17 +39,26 @@ export function Board({ xIsNext, squares, onPlay }: BoardProps) {
   const winner = calculateWinner(squares);
 
   const status = winner
-    ? 'Winner: ' + winner
+    ? 'Winner: ' + winner.square
     : 'Next player: ' + (xIsNext ? '×' : '○');
+
+  const style = {
+    height: `${SIZE * side}px`,
+    width: `${SIZE * side}px`,
+    display: 'grid',
+    gridTemplateColumns: `repeat(${side}, 1fr)`,
+    gap: '0',
+  };
 
   return (
     <>
       <div className={styles.status}>{status}</div>
-      <div className={styles.board}>
+      <div style={style}>
         {squares.map((square, i) => (
           <Square
             key={`${square}-${i}`}
             value={square}
+            win={winner?.line?.includes(i) ?? false}
             onSquareClick={() => handleClick(i)}
           />
         ))}
@@ -72,7 +89,10 @@ function calculateWinner(squares: Square[]) {
   });
 
   if (match) {
-    return squares[match[0]];
+    return {
+      square: squares[match[0]],
+      line: match,
+    };
   }
   return null;
 }

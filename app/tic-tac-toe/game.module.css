@@ -1,5 +1,12 @@
-.game {
+.outer {
   margin: 64px;
+}
+
+.slider {
+  margin-bottom: 32px;
+}
+
+.game {
   display: flex;
   flex-direction: row;
 }
