@@ -69,17 +69,23 @@ export function Board({ xIsNext, squares, onPlay, side }: BoardProps) {
 
 function calculateWinner(squares: Square[], side: number) {
   const length = [...Array(squares.length)].map((_, i) => i);
+  // 横列のパターンを算出
   const horizontal = length.reduce(
     (a, c) => (c % side ? a : [...a, length.slice(c, c + side)]),
     [] as number[][]
   );
+  // 縦列のパターンを算出
   const vertical = horizontal[0].map((h) =>
     [...Array(side)].map((_, i) => i * side + h)
   );
+  // 左斜めのパターンを算出
   const leftDiagonal = horizontal.map((h, i) => h[i]);
+  // 右斜めのパターンを算出
   const rightDiagonal = horizontal.map((h, i) => h[h.length - (i + 1)]);
+  // 勝利条件のパターン
   const lines = [...horizontal, ...vertical, leftDiagonal, rightDiagonal];
 
+  // 勝利条件に合致していたら、勝者とパターンを返す
   const match = lines.find((line) => {
     return (
       squares[line[0]] !== null &&
